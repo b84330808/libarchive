@@ -290,12 +290,15 @@ __la_open(const char *path, int flags, ...)
 {
 	va_list ap;
 	wchar_t *ws;
-	int r, pmode;
+	int r, pmode = 0;
 	DWORD attr;
 
-	va_start(ap, flags);
-	pmode = va_arg(ap, int);
-	va_end(ap);
+	/* Callers only pass a mode together with O_CREAT. */
+	if (flags & O_CREAT) {
+		va_start(ap, flags);
+		pmode = va_arg(ap, int);
+		va_end(ap);
+	}
 	ws = NULL;
 
 	/* _(w)sopen_s fails if we provide any other modes */
@@ -403,12 +406,15 @@ __la_wopen(const wchar_t *path, int flags, ...)
 {
 	va_list ap;
 	wchar_t *fullpath;
-	int r, pmode;
+	int r, pmode = 0;
 	DWORD attr;
 
-	va_start(ap, flags);
-	pmode = va_arg(ap, int);
-	va_end(ap);
+	/* Callers only pass a mode together with O_CREAT. */
+	if (flags & O_CREAT) {
+		va_start(ap, flags);
+		pmode = va_arg(ap, int);
+		va_end(ap);
+	}
 	fullpath = NULL;
 
 	/* _(w)sopen_s fails if we provide any other modes */
